@@ -110,15 +110,15 @@ def analyze(klines: list) -> Optional[StrategyResult]:
     macd_crossed_up = prev_macd < prev_macd_sig and macd > macd_sig
     macd_crossed_down = prev_macd > prev_macd_sig and macd < macd_sig
 
-    # BUY conditions
-    if rsi < Config.RSI_OVERSOLD and macd_crossed_up and ema_short > ema_long:
+    # BUY: MACD bullish crossover + EMA uptrend + RSI not overbought
+    if macd_crossed_up and ema_short > ema_long and rsi < Config.RSI_OVERBOUGHT:
         signal = Signal.BUY
-        reason = f"RSI={rsi:.1f} (oversold), MACD bullish crossover, EMA uptrend"
+        reason = f"MACD bullish crossover, EMA uptrend, RSI={rsi:.1f}"
 
-    # SELL conditions
-    elif rsi > Config.RSI_OVERBOUGHT and macd_crossed_down and ema_short < ema_long:
+    # SELL: MACD bearish crossover + EMA downtrend + RSI not oversold
+    elif macd_crossed_down and ema_short < ema_long and rsi > Config.RSI_OVERSOLD:
         signal = Signal.SELL
-        reason = f"RSI={rsi:.1f} (overbought), MACD bearish crossover, EMA downtrend"
+        reason = f"MACD bearish crossover, EMA downtrend, RSI={rsi:.1f}"
 
     else:
         signal = Signal.HOLD
